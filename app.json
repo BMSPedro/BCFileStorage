@@ -10,7 +10,8 @@
   "help": "",
   "url": "",
   "logo": "./bmslogo.jpg",
-  "dependencies": [],
+  "dependencies": [
+  ],
   "screenshots": [],
   "platform": "1.0.0.0",
   "application": "24.0.0.0",

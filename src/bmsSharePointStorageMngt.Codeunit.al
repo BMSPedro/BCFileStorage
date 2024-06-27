@@ -1,7 +1,7 @@
-codeunit 80000 "SharePoint Storage Mngt"
+codeunit 80000 "bmsSharePoint Storage Mngt"
 {
 
-    procedure HandlingFilesOnSharepoint(fileName: text[250]; InStream: InStream; var documentAttachment: Record "Document Attachment"; fileAction: Text[20])
+    procedure HandlingFilesOnSharepoint(fileName: text[250]; var InStream: InStream; var documentAttachment: Record "Document Attachment"; fileAction: Text[20])
     var
         TempsharePointFolder: Record "SharePoint Folder" temporary;
         TempsharePointFile: Record "SharePoint File" temporary;
@@ -12,14 +12,14 @@ codeunit 80000 "SharePoint Storage Mngt"
 
         case fileAction of
             'Download':
-                if documentAttachment."File Path" <> '' then begin
+                if documentAttachment."bmsFile Path" <> '' then begin
                     sharePointClient.GetFolderFilesByServerRelativeUrl(TempsharePointFolder."Server Relative Url", TempsharePointFile);
                     TempSharePointFile.SetRange(Name, documentAttachment."File Name" + '.' + documentAttachment."File Extension");
                     if TempSharePointFile.FindFirst() then
                         SharePointClient.DownloadFileContent(TempSharePointFile.OdataId, documentAttachment."File Name" + '.' + documentAttachment."File Extension");
                 end;
             'Delete':
-                if documentAttachment."File Path" <> '' then begin
+                if documentAttachment."bmsFile Path" <> '' then begin
                     sharePointClient.GetFolderFilesByServerRelativeUrl(TempsharePointFolder."Server Relative Url", TempsharePointFile);
                     TempSharePointFile.SetRange(Name, documentAttachment."File Name" + '.' + documentAttachment."File Extension");
                     if TempSharePointFile.FindFirst() then
@@ -28,7 +28,14 @@ codeunit 80000 "SharePoint Storage Mngt"
             'Upload':
                 begin
                     sharePointClient.AddFileToFolder(TempsharePointFolder."Server Relative Url", format(documentAttachment."Table ID") + '-' + documentAttachment."No." + '-' + filename, InStream, TempsharePointFile);
-                    documentAttachment."File Path" := TempsharePointFile."Server Relative Url";
+                    documentAttachment."bmsFile Path" := TempsharePointFile."Server Relative Url";
+                end;
+            'Show':
+                if documentAttachment."bmsFile Path" <> '' then begin
+                    sharePointClient.GetFolderFilesByServerRelativeUrl(TempsharePointFolder."Server Relative Url", TempsharePointFile);
+                    TempSharePointFile.SetRange(Name, documentAttachment."File Name" + '.' + documentAttachment."File Extension");
+                    if TempSharePointFile.FindFirst() then
+                        SharePointClient.DownloadFileContent(TempSharePointFile.OdataId, InStream);
                 end;
         end;
     end;
@@ -41,8 +48,8 @@ codeunit 80000 "SharePoint Storage Mngt"
         sharePointAuthInt: Interface "SharePoint Authorization";
     begin
         companyInformation.Get();
-        sharePointAuthInt := sharePointAuth.CreateAuthorizationCode(azureTenant.GetAadTenantId(), companyInformation."Microsoft ENTRA App. Client ID", companyInformation.GetSecretValue(companyInformation."Microsoft ENTRA App Sec. Value"), 'https://axiansfrance.sharepoint.com/.default');
-        sharePointClient.Initialize(companyInformation."SharePoint Site Base Url", sharePointAuthInt);
+        sharePointAuthInt := sharePointAuth.CreateAuthorizationCode(azureTenant.GetAadTenantId(), companyInformation."bmsMicrosoft ENTRA Client ID", companyInformation.GetSecretValue(companyInformation."bmsMicrosoft ENTRA Sec. Value"), 'https://axiansfrance.sharepoint.com/.default');
+        sharePointClient.Initialize(companyInformation."bmsSharePoint Site Base Url", sharePointAuthInt);
     end;
 
     local procedure getSPFolder(documentAttachment: Record "Document Attachment"): Record "SharePoint Folder"
@@ -60,7 +67,7 @@ codeunit 80000 "SharePoint Storage Mngt"
     begin
         companyInformation.get();
 
-        fileRelativeUrl := copystr(companyInformation."SharePoint Site Base Url", StrPos(companyInformation."SharePoint Site Base Url", 'sites') - 1, StrLen(companyInformation."SharePoint Site Base Url")) + 'Shared Documents/';
+        fileRelativeUrl := copystr(companyInformation."bmsSharePoint Site Base Url", StrPos(companyInformation."bmsSharePoint Site Base Url", 'sites') - 1, StrLen(companyInformation."bmsSharePoint Site Base Url")) + 'Shared Documents/';
 
         sharePointClient.GetSubFoldersByServerRelativeUrl(fileRelativeUrl, TempsharePointFolder);
         TempsharePointFolder.SetRange(Name, DelChr(companyInformation.Name, '=', '"*<>?/\|.'));
@@ -129,7 +136,7 @@ codeunit 80000 "SharePoint Storage Mngt"
         lfileName: Text[250];
     begin
         companyInformation.Get();
-        if companyInformation."File Storage Type" = companyInformation."File Storage Type"::SharePoint then begin
+        if companyInformation."bmsFile Storage Type" = companyInformation."bmsFile Storage Type"::SharePoint then begin
             IsHandled := true;
             lfileName := CopyStr(FileName, 1, 250);
             HandlingFilesOnSharepoint(lfileName, DocInStream, DocumentAttachment, 'Upload');
@@ -143,9 +150,9 @@ codeunit 80000 "SharePoint Storage Mngt"
         fileMngt: Codeunit "File Management";
     begin
         companyInformation.get();
-        if companyInformation."File Storage Type" = companyInformation."File Storage Type"::SharePoint then begin
+        if companyInformation."bmsFile Storage Type" = companyInformation."bmsFile Storage Type"::SharePoint then begin
             IsHandled := true;
-            DocumentAttachment."File Name" := copystr(fileMngt.GetFileNameWithoutExtension(DocumentAttachment."File Path"), 1, 50);
+            DocumentAttachment."File Name" := copystr(fileMngt.GetFileNameWithoutExtension(DocumentAttachment."bmsFile Path"), 1, 50);
         end;
     end;
 
@@ -156,7 +163,7 @@ codeunit 80000 "SharePoint Storage Mngt"
         DocInStream: InStream;
     begin
         companyInformation.get();
-        if companyInformation."File Storage Type" = companyInformation."File Storage Type"::SharePoint then begin
+        if companyInformation."bmsFile Storage Type" = companyInformation."bmsFile Storage Type"::SharePoint then begin
             HandlingFilesOnSharepoint(DocumentAttachment."File Name", DocInStream, DocumentAttachment, 'Download');
             IsHandled := true;
         end;
@@ -168,8 +175,8 @@ codeunit 80000 "SharePoint Storage Mngt"
         companyInformation: Record "Company Information";
     begin
         companyInformation.get();
-        if companyInformation."File Storage Type" = companyInformation."File Storage Type"::SharePoint then
-            if DocumentAttachment."File Path" <> '' then begin
+        if companyInformation."bmsFile Storage Type" = companyInformation."bmsFile Storage Type"::SharePoint then
+            if DocumentAttachment."bmsFile Path" <> '' then begin
                 IsHandled := true;
                 AttachmentIsAvailable := true;
             end;

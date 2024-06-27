@@ -1,29 +1,32 @@
-pageextension 80000 "Company Information" extends "Company Information"
+pageextension 80000 "bmsCompany Information" extends "Company Information"
 {
     layout
     {
         addafter(Picture)
         {
-            field("File Storage Type"; Rec."File Storage Type")
+            field("bmsFile Storage Type"; Rec."bmsFile Storage Type")
             {
                 ApplicationArea = all;
                 ToolTip = 'File Storage Type';
+                Caption = 'File Storage Type';
             }
-            group(SharePoint)
+            group(bmsSharePoint)
             {
                 ShowCaption = false;
-                Visible = rec."File Storage Type" = rec."File Storage Type"::SharePoint;
-                field("SharePoint Site Base Url"; Rec."SharePoint Site Base Url")
+                Visible = rec."bmsFile Storage Type" = rec."bmsFile Storage Type"::SharePoint;
+                field("bmsSharePoint Site Base Url"; Rec."bmsSharePoint Site Base Url")
                 {
                     ApplicationArea = all;
                     ToolTip = 'SharePoint Site Base Url';
+                    Caption = 'SharePoint Site Base Url';
                 }
-                field("Microsoft ENTRA App. Client ID"; Rec."Microsoft ENTRA App. Client ID")
+                field("bmsMicrosoft ENTRA App. Client ID"; Rec."bmsMicrosoft ENTRA Client ID")
                 {
                     ApplicationArea = all;
                     ToolTip = 'Microsoft ENTRA App. Client ID';
+                    Caption = 'Microsoft ENTRA App. Client ID';
                 }
-                field("Microsoft ENTRA App. Secret Value Key"; appSecretValue)
+                field("bmsMicrosoft ENTRA App. Secret Value Key"; appSecretValue)
                 {
                     ApplicationArea = all;
                     ToolTip = 'Microsoft ENTRA App. Secret Value Key';
@@ -35,21 +38,22 @@ pageextension 80000 "Company Information" extends "Company Information"
                     end;
                 }
             }
-            group(AzureStorage)
+            group(bmsAzureStorage)
             {
                 ShowCaption = false;
-                Visible = rec."File Storage Type" = rec."File Storage Type"::"Azure File Share";
-                field("Azure Storage Account"; Rec."Azure Storage Account")
+                Visible = rec."bmsFile Storage Type" = rec."bmsFile Storage Type"::"Azure File Share";
+                field("bmsAzure Storage Account"; Rec."bmsAzure Storage Account")
                 {
                     ApplicationArea = all;
                     ToolTip = 'Azure Storage Account';
+                    Caption = 'File Storage Type';
                 }
-                field("AFS SaaS Connection String"; rec."AFS SaaS Connection String")
+                field("bmsAFS SaaS Connection String"; rec."bmsAFS SaaS Connection String")
                 {
                     ApplicationArea = all;
                     ToolTip = 'Azure File Share SaaS Connzction String';
                     ExtendedDatatype = Masked;
-                    Caption = 'Azure File Share SaaS Connzction String';
+                    Caption = 'Azure File Share SaaS Connection String';
                 }
             }
         }
@@ -59,7 +63,7 @@ pageextension 80000 "Company Information" extends "Company Information"
 
     trigger OnOpenPage()
     begin
-        if not IsNullGuid(Rec."Microsoft ENTRA App Sec. Value") then
+        if not IsNullGuid(Rec."bmsMicrosoft ENTRA Sec. Value") then
             appSecretValue := '***';
     end;
 

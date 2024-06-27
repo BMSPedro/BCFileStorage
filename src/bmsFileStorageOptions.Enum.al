@@ -1,4 +1,4 @@
-enum 80000 "File Storage Options"
+enum 80000 "bmsFile Storage Options"
 {
     Extensible = true;
 

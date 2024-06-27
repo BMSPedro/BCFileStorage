@@ -1,4 +1,4 @@
-codeunit 80001 "Azure Storage Mngt"
+codeunit 80001 "bmsAzure Storage Mngt"
 {
     procedure HandlingFilesOnAFS(fileName: text; InStream: InStream; var documentAttachment: Record "Document Attachment"; fileAction: Text[20])
     var
@@ -11,20 +11,23 @@ codeunit 80001 "Azure Storage Mngt"
 
         case fileAction of
             'Download':
-                if documentAttachment."File Path" <> '' then begin
-                    afsFileClient.GetFileAsStream(documentAttachment."File Path", InStream);
+                if documentAttachment."bmsFile Path" <> '' then begin
+                    afsFileClient.GetFileAsStream(documentAttachment."bmsFile Path", InStream);
                     fileName := documentAttachment."File Name" + '.' + documentAttachment."File Extension";
                     DownloadFromStream(InStream, '', '', '', fileName);
                 end;
             'Delete':
-                if documentAttachment."File Path" <> '' then
-                    afsFileClient.DeleteFile(documentAttachment."File Path");
+                if documentAttachment."bmsFile Path" <> '' then
+                    afsFileClient.DeleteFile(documentAttachment."bmsFile Path");
             'Upload':
                 begin
                     afsOpReponse := afsFileClient.CreateFile(folderName + '/' + format(documentAttachment."Table ID") + '-' + documentAttachment."No." + '-' + fileName, InStream);
                     afsOpReponse := afsFileClient.PutFileStream(folderName + '/' + format(documentAttachment."Table ID") + '-' + documentAttachment."No." + '-' + fileName, InStream);
-                    documentAttachment."File Path" := folderName + '/' + format(documentAttachment."Table ID") + '-' + documentAttachment."No." + '-' + fileName;
+                    documentAttachment."bmsFile Path" := folderName + '/' + format(documentAttachment."Table ID") + '-' + documentAttachment."No." + '-' + fileName;
                 end;
+            'Show':
+                if documentAttachment."bmsFile Path" <> '' then
+                    afsFileClient.GetFileAsStream(documentAttachment."bmsFile Path", InStream);
         end;
 
     end;
@@ -37,11 +40,11 @@ codeunit 80001 "Azure Storage Mngt"
     begin
         companyInformation.Get();
 
-        storageAuthorization := StorageServiceAuthorization.UseReadySAS(companyInformation."AFS SaaS Connection String");
+        storageAuthorization := StorageServiceAuthorization.UseReadySAS(companyInformation."bmsAFS SaaS Connection String");
 
         afsFileClient.Initialize(
-             copystr(companyInformation."Azure Storage Account", 1, StrPos(companyInformation."Azure Storage Account", '/') - 1),
-             copystr(companyInformation."Azure Storage Account", StrPos(companyInformation."Azure Storage Account", '/') + 1, StrLen(companyInformation."Azure Storage Account")),
+             copystr(companyInformation."bmsAzure Storage Account", 1, StrPos(companyInformation."bmsAzure Storage Account", '/') - 1),
+             copystr(companyInformation."bmsAzure Storage Account", StrPos(companyInformation."bmsAzure Storage Account", '/') + 1, StrLen(companyInformation."bmsAzure Storage Account")),
              storageAuthorization);
     end;
 
@@ -59,7 +62,7 @@ codeunit 80001 "Azure Storage Mngt"
     begin
         companyInformation.get();
 
-        afsFileClient.ListDirectory(copystr(companyInformation."Azure Storage Account", StrPos(companyInformation."Azure Storage Account", '/') + 1, StrLen(companyInformation."Azure Storage Account")), TempafsDirectoryContent);
+        afsFileClient.ListDirectory(copystr(companyInformation."bmsAzure Storage Account", StrPos(companyInformation."bmsAzure Storage Account", '/') + 1, StrLen(companyInformation."bmsAzure Storage Account")), TempafsDirectoryContent);
         TempafsDirectoryContent.SetRange(Name, companyInformation.Name);
         if TempafsDirectoryContent.IsEmpty then
             afsFileClient.CreateDirectory(companyInformation.Name);
@@ -125,7 +128,7 @@ codeunit 80001 "Azure Storage Mngt"
         lfileName: Text[250];
     begin
         companyInformation.Get();
-        if companyInformation."File Storage Type" = companyInformation."File Storage Type"::"Azure File Share" then begin
+        if companyInformation."bmsFile Storage Type" = companyInformation."bmsFile Storage Type"::"Azure File Share" then begin
             IsHandled := true;
             lfileName := CopyStr(FileName, 1, 250);
             HandlingFilesOnAFS(lfileName, DocInStream, DocumentAttachment, 'Upload');
@@ -139,9 +142,9 @@ codeunit 80001 "Azure Storage Mngt"
         fileMngt: Codeunit "File Management";
     begin
         companyInformation.get();
-        if companyInformation."File Storage Type" = companyInformation."File Storage Type"::"Azure File Share" then begin
+        if companyInformation."bmsFile Storage Type" = companyInformation."bmsFile Storage Type"::"Azure File Share" then begin
             IsHandled := true;
-            DocumentAttachment."File Name" := copystr(fileMngt.GetFileNameWithoutExtension(DocumentAttachment."File Path"), 1, 50);
+            DocumentAttachment."File Name" := copystr(fileMngt.GetFileNameWithoutExtension(DocumentAttachment."bmsFile Path"), 1, 50);
         end;
     end;
 
@@ -152,7 +155,7 @@ codeunit 80001 "Azure Storage Mngt"
         DocInStream: InStream;
     begin
         companyInformation.get();
-        if companyInformation."File Storage Type" = companyInformation."File Storage Type"::"Azure File Share" then begin
+        if companyInformation."bmsFile Storage Type" = companyInformation."bmsFile Storage Type"::"Azure File Share" then begin
             HandlingFilesOnAFS(DocumentAttachment."File Name", DocInStream, DocumentAttachment, 'Download');
             IsHandled := true;
         end;
@@ -164,8 +167,8 @@ codeunit 80001 "Azure Storage Mngt"
         companyInformation: Record "Company Information";
     begin
         companyInformation.get();
-        if companyInformation."File Storage Type" = companyInformation."File Storage Type"::"Azure File Share" then
-            if DocumentAttachment."File Path" <> '' then begin
+        if companyInformation."bmsFile Storage Type" = companyInformation."bmsFile Storage Type"::"Azure File Share" then
+            if DocumentAttachment."bmsFile Path" <> '' then begin
                 IsHandled := true;
                 AttachmentIsAvailable := true;
             end;
