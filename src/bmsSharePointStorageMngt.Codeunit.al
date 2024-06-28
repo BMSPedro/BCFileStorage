@@ -48,7 +48,10 @@ codeunit 80000 "bmsSharePoint Storage Mngt"
         sharePointAuthInt: Interface "SharePoint Authorization";
     begin
         companyInformation.Get();
-        sharePointAuthInt := sharePointAuth.CreateAuthorizationCode(azureTenant.GetAadTenantId(), companyInformation."bmsMicrosoft ENTRA Client ID", companyInformation.GetSecretValue(companyInformation."bmsMicrosoft ENTRA Sec. Value"), 'https://axiansfrance.sharepoint.com/.default');
+        sharePointAuthInt := sharePointAuth.CreateAuthorizationCode(azureTenant.GetAadTenantId(), companyInformation."bmsMicrosoft ENTRA Client ID", companyInformation.GetSecretValue(companyInformation."bmsMicrosoft ENTRA Sec. Value"),
+        CopyStr(companyInformation."bmsSharePoint Site Base Url", 1,
+        StrPos(companyInformation."bmsSharePoint Site Base Url", 'sites') - 1)
+        + '.default');
         sharePointClient.Initialize(companyInformation."bmsSharePoint Site Base Url", sharePointAuthInt);
     end;
 
