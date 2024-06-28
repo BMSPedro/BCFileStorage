@@ -1,4 +1,4 @@
-page 80000 "bmsPDFV PDF Viewer"
+page 80000 "bmsPDF Viewer"
 {
 
     Caption = 'PDF Viewer';
@@ -14,7 +14,7 @@ page 80000 "bmsPDFV PDF Viewer"
             group(General)
             {
                 ShowCaption = false;
-                usercontrol(PDFViewer; "bmsPDFV PDF Viewer")
+                usercontrol(PDFViewer; "bmsPDF Viewer")
                 {
                     ApplicationArea = All;
 

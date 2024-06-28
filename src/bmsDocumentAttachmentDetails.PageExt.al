@@ -13,24 +13,14 @@ pageextension 80001 "bmsDocument Attachment Details" extends "Document Attachmen
         }
         addlast(FactBoxes)
         {
-            part("bmsPDFV PDF Viewer Factbox"; "bmsPDFV PDF Viewer Factbox")
+            part("bmsPDFV PDF Viewer Factbox"; "bmsPDF Viewer Factbox")
             {
                 ApplicationArea = all;
+                Visible = rec."File Type" = Rec."File Type"::PDF;
                 SubPageLink = "Table ID" = field("Table ID"), "No." = field("No."), "Document Type" = field("Document Type"), "Line No." = field("Line No."), ID = field(ID);
             }
         }
     }
-
-    trigger OnAfterGetCurrRecord()
-    begin
-        //CurrPage."bmsPDFV PDF Viewer Factbox".Page.Update(false);
-    end;
-
-    trigger OnAfterGetRecord()
-    begin
-        //CurrPage.Update(false);
-        //CurrPage."bmsPDFV PDF Viewer Factbox".Page.Update(false);
-    end;
 
     trigger OnDeleteRecord(): Boolean
     var

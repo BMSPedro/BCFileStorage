@@ -1,4 +1,4 @@
-page 80001 "bmsPDFV PDF Viewer Factbox"
+page 80001 "bmsPDF Viewer Factbox"
 {
 
     Caption = 'PDF Viewer';
@@ -15,7 +15,7 @@ page 80001 "bmsPDFV PDF Viewer Factbox"
             group(General)
             {
                 ShowCaption = false;
-                usercontrol(PDFViewer; "bmsPDFV PDF Viewer")
+                usercontrol(PDFViewer; "bmsPDF Viewer")
                 {
                     ApplicationArea = All;
                     trigger onView()
@@ -87,7 +87,7 @@ page 80001 "bmsPDFV PDF Viewer Factbox"
     local procedure RunFullView()
     var
         PDFViewerCard:
-            Page "bmsPDFV PDF Viewer";
+            Page "bmsPDF Viewer";
     begin
         PDFViewerCard.SetRecord(Rec);
         PDFViewerCard.RunModal();
