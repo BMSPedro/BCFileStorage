@@ -1,7 +1,7 @@
 
 # BC External file storage Management
 
-1. [Introduction](/BCFileDStorage/Introduction)
+1. [Introduction](https://github.com/BMSPedro/BCFileStorage/blob/main/introduction.md)
 2. Business Central and file Storage
 3. Solution evolution, from Nav to today
 4. File storage solutions in a 100% Microsoft context
