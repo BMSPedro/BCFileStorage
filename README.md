@@ -7,6 +7,6 @@
 7. [SharePoint Storage](https://github.com/BMSPedro/BCFileStorage/blob/main/SharePoint.md)
 8. [Azure Storage Account](https://github.com/BMSPedro/BCFileStorage/blob/main/ASA.md)
 9. [What does the law say about electronic file storage - examples](https://github.com/BMSPedro/BCFileStorage/blob/main/compliance.md)
-10. Solutions summary - conclusions
+10. [Solutions summary - conclusions](https://github.com/BMSPedro/BCFileStorage/blob/main/sum.md)
 11. Bonus, PDF display in the Business Central client
    
