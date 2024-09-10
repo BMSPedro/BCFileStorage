@@ -14,7 +14,7 @@ Storage must be secure and only people with the necessary level of permission sh
 ## Compliance:
 The law may in certain regions impose rules on file storage, location, time, access, integrity and modifications.
 
-## Business Central and file / Solution evolution, from Nav to today
+## Business Central and file storage / Solution evolution, from Nav to today
 As Dynamics Nav was an on-prem solution, file storage was based on two technologies: storage in the ERP database, and/or in the local file system. This is also the case for on-prem Business Central installations. These landscapes have relatively few or no constraints when it comes to database or file server capacity.
 Web protocols enable exchanges between two systems, and it was always possible to use a cloud storage solution.
 The arrival of SaaS mode imposes new constraints on data storage, as Business Central Online does not natively have access to local file systems. In this context, Cloud solutions (Http based) such as OneDrive, SharePoint, Azure Storage, or others prove to be the best solutions, it obviously remains possible to store files in the database.
